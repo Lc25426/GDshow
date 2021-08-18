@@ -6,43 +6,205 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
     <title>地图显示</title>
-    
+
 </head>
 <body>
-<div id="container"></div>
-<!-- 加载地图JSAPI脚本 -->
-<script src="https://webapi.amap.com/maps?v=1.4.15&key=	882ab008ad507f804aaa3be9dcf7b40b"></script>
-<script>
-    var map = new AMap.Map('container', {
-        resizeEnable: true, //是否监控地图容器尺寸变化
-        zoom:14, //初始化地图层级
-        center: [118.796604,32.059018] //初始化地图中心点
-    });
+        <div class="header" id="header">
+            <div id="left">
+                <svg class="icon" aria-hidden="true" onclick="window.history.back()" 
+                style="font-size: 24px;">
+                    <use xlink:href="#icon-fanhui"></use>
+                </svg>
+            </div>
+            <div id="center">
+            
+                <span style="text-align: center;display:block;font-weight:bold; font-size: 32px; ;" >选择网点</span>
+            </div>
+            <div id="right" style="display: inline-block;">
+                <div id="CurrentLocation"><!-- 当前位置 -->
+                    <svg class="icon" aria-hidden="true"
+                    style="font-size: 13px;margin-top: 1em;"
+                    >
+                    <use xlink:href="#icon-dizhidingweiweizhi"></use>
+                    </svg></br>
+                    <span style="font-size: 13px;">南京</span>
 
-    var options = {
-        'showButton': true,//是否显示定位按钮
-		'buttonPosition': 'RB',//定位按钮的位置
-		/* LT LB RT RB */
-		'buttonOffset': new AMap.Pixel(10, 20),//定位按钮距离对应角落的距离
-		'showMarker': true,//是否显示定位点
-		'markerOptions':{//自定义定位点样式，同Marker的Options
-		  'offset': new AMap.Pixel(-18, -36),
-		  'content':'<img src="https://a.amap.com/jsapi_demos/static/resource/img/user.png" style="width:36px;height:36px"/>'
-		},
-    }
-    AMap.plugin(["AMap.Geolocation"], function() {
-        var geolocation = new AMap.Geolocation(options);
-        map.addControl(geolocation);
-        geolocation.getCurrentPosition()
+                </div>
+                <div id="fanhui" style="display: inline-block;">
+                    <svg class="icon" aria-hidden="true"
+                    style="font-size: 18px; margin-right: 0%;margin-top: 0.5em;">
+                        <use xlink:href="#icon-fenlei"></use>
+                    </svg>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="MapPage">
+        </div>
+        
+        <div class="details" id="1">
+            <div id="2" style="margin-left: 5%;">
+                <span style="font-weight:bold; font-size: 16px;">中国移动</span> <span style="font-weight:bold;font-size: 16px;">(南京龙江阳光广场店)</span></br>
+                <span style="font-size: 14px;">江苏省-南京市-鼓楼区-将康路16号</span>
+            </div>
+            <div id="3" style="height:auto; width: 100%; bottom: 0%; position: absolute;">
+                <div id="BusinessTime">
+                    <span style="margin-left: 20%; margin-top: 10%;">营业时间</span>
+                </div>
+                <div id="Specific">
+                    <span style="margin-left: 20%;vertical-align:middle ">查看详情</span>
+                </div>              
+            </div>
+        </div> 
+    
+<!-- 加载地图JSAPI脚本 -->
+</body>
+
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=	882ab008ad507f804aaa3be9dcf7b40b"></script>
+<script src="./download/font_gngwdf010at/iconfont.js"></script>
+<script>
+   window.onload = function(){
+        var map = new AMap.Map('MapPage', {
+        zoom:14, //初始化地图层级
+        center: [118.7549, 32.0584], //初始化地图中心点  
+        dragEnable: true
+        });
+  
+        var lnglats= [["118.7423","32.006422"],["118.7352","32.036933"],["118.745435","32.0154345"]];
+        var icon =new AMap.Icon({
+        size: new AMap.Size(25, 34),
+         image: './img/编组 10备份 7.png',
+         imageSize: new AMap.Size(20, 40) 
+    })
+        for(var i= 0;i<lnglats.length;i++){
+        var marker=new AMap.Marker({
+            position:lnglats[i],        //采用默认样式，无需自定义
+            icon: icon ,
+            map:map
+        })
+        marker.setLabel({
+                offset: new AMap.Pixel(-20, 40),//修改label相对于maker的位置
+                content: "中国移动"
+            });
+            ;
+            }
+
+            map.setFitView();//将所有的点在一起显示
+
+    //     var options = {
+    //     'showButton': true,//是否显示定位按钮
+	// 	'buttonPosition': 'RB',//定位按钮的位置
+	// 	/* LT LB RT RB */
+	// 	'buttonOffset': new AMap.Pixel(10, 20),//定位按钮距离对应角落的距离
+	// 	'showMarker': true,//是否显示定位点
+	// 	'markerOptions':{//自定义定位点样式，同Marker的Options
+	// 	  'offset': new AMap.Pixel(-18, -36),
+	// 	  'content':'<img src="https://a.amap.com/jsapi_demos/static/resource/img/user.png" style="width:36px;height:36px"/>'
+	// 	},
+    //     }
+    //      AMap.plugin(["AMap.Geolocation"], function() {
+    //     var geolocation = new AMap.Geolocation(options);
+    //     map.addControl(geolocation);
+    //     geolocation.getCurrentPosition()
+    // });
+
+   }
+    
+
+    map.on("complete", function(){
+        log.success("地图加载完成！");
     });
 </script>
-</body>
 <style>
-    html,
-    body,
-    #container {
-      width: 100%;
-      height: 100%;
+      .amap-logo{
+            display: none;    /*隐藏左下角地图logo*/
+        }
+        .amap-copyright{
+            display: none!important;
+        }
+    .icon {
+            width: 2em;
+            height:2em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+         }
+    .details{
+        width: 100%;
+        height: 20%;
+        background-color: rgb(248, 248, 248,0.1);
+        position: absolute;
+        bottom: 0;
+        /* z-index:99 ; */
+        border:2px solid;
+        border-radius: 20px;
+        
     }
+    .header{
+        width: 100%;
+        height: 60px;
+        /* z-index: 1; */
+        position: relative;
+        background: rgb(213, 219, 219,0.1);
+        font-size: 0;
+         }
+
+         #left,#right
+         {display: inline-block;
+            width: 20%; 
+            height: 60px; 
+            /* background: #fcfcfc; */
+            
+            margin-top: 0;
+            vertical-align:top; 
+        }
+        #CurrentLocation,#fanhui{
+            display: inline-block;
+            width: 50%;
+            height: 60px;
+            margin-top: 0;
+            vertical-align:top; 
+        }
+         #center{
+             display: inline-block;
+             margin-top: 0;
+             top: 0;
+             width: 60%;
+             vertical-align:top;
+              height: 60px;
+              /* background: #fcfcfc; */
+            }
+         #MapPage {
+        width: 100%;
+        height: 590px;
+        /* z-index: -1; */
+         }
+   
+   
+    #BusinessTime{
+        display: inline;
+        font-size: 16px;
+        float: left;
+        height: 50px;
+        width: 150px;
+        background-color:rgb(241, 196, 97) ;
+        border-radius: 10px;
+        /* color: rgb(241, 196, 97); */
+    }
+     #Specific{
+        display: inline;
+        float:right;
+        font-size: 16px;
+        height: 50px;
+        width: 150px;
+        background-color: rgb(74, 160, 218);
+        border-radius: 10px;
+        /* color: rgb(74, 160, 218); */
+        
+   
+    }
+
+
 </style>
 </html>

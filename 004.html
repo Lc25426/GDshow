@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>自定义样式信息窗体</title>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <!--设置信息窗体的样式-->
+    <style type="text/css">
+        .info {
+            border: solid 1px silver;
+        }
+        div.info-top {
+            position: relative;
+            background: none repeat scroll 0 0 #F9F9F9;
+            border-bottom: 1px solid #CCC;
+            border-radius: 5px 5px 0 0;
+        }
+        div.info-top div {
+            display: inline-block;
+            color: #333333;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 31px;
+            padding: 0 10px;
+        }
+        div.info-top img {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            transition-duration: 0.25s;
+        }
+        div.info-top img:hover {
+            box-shadow: 0px 0px 5px #000;
+        }
+        div.info-middle {
+            font-size: 12px;
+            padding: 6px;
+            line-height: 20px;
+        }
+        div.info-bottom {
+            height: 0px;
+            width: 100%;
+            clear: both;
+            text-align: center;
+        }
+        div.info-bottom img {
+            position: relative;
+            z-index: 104;
+        }
+        span {
+            margin-left: 5px;
+            font-size: 11px;
+        }
+        .info-middle img {
+            float: left;
+            margin-right: 6px;
+        }
+    </style>
+    <script type="text/javascript"
+            src="http://webapi.amap.com/maps?v=1.4.6&key=882ab008ad507f804aaa3be9dcf7b40b"></script>
+</head>
+<body>
+<div id="container"></div>
+<script type="text/javascript">
+	var map = new AMap.Map("container",{
+		resizeEnable:true,
+		center: [118.7549, 32.0584],//地图中心位置
+        zoom:14,
+	});
+	
+	var marker = new AMap.Marker({
+		map:map,
+		position: [118.7549, 32.0584]//点所在位置
+	});
+
+    //
+    var options = {
+        'showButton': true,//是否显示定位按钮
+		'buttonPosition': 'RB',//定位按钮的位置
+		/* LT LB RT RB */
+		'buttonOffset': new AMap.Pixel(10, 20),//定位按钮距离对应角落的距离
+		'showMarker': false,//是否显示定位点
+		'markerOptions':{//自定义定位点样式，同Marker的Options
+		  'offset': new AMap.Pixel(-18, -36),
+		  'content':'<img src="https://a.amap.com/jsapi_demos/static/resource/img/user.png" style="width:36px;height:36px"/>'
+		},
+        }
+         AMap.plugin(["AMap.Geolocation"], function() {
+        var geolocation = new AMap.Geolocation(options);
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition()
+    });
+	
+	//实例化信息窗体
+	//标题头
+    var title = '方恒假日酒店<span style="font-size:11px;color:#F00;">价格:318</span>',
+        content = [];   //内容
+    content.push("<img src='http://tpc.googlesyndication.com/simgad/5843493769827749134'>地址：北京市朝阳区阜通东大街6号院3号楼东北8.3公里");
+    content.push("电话：010-64733333");
+    content.push("<a href='http://ditu.amap.com/detail/B000A8URXB?citycode=110105'>详细信息</a>");
+	
+	//创建信息窗体
+	var infoWindow = new AMap.InfoWindow({
+		isCustom:true, //是否自定义信息窗体
+		content: createInfoWindow(title, content.join("<br/>")), //调用创建信息窗体的方法--信息窗体的内容
+		offset:new AMap.Pixel(16, -45) //偏移量
+	});
+	
+	//如果希望的是点击标记才 出现这个信息窗口，那把 下面的注释去掉即可
+	AMap.event.addListener(marker,'click',function(){ //监听点标记的点击事件
+		infoWindow.open(map,marker.getPosition()); //信息窗体打开
+	});
+	
+	//构建自定义信息窗体
+    function createInfoWindow(title, content) {
+    	//info 为 信息窗体
+        var info = document.createElement("div");
+        info.className = "info";
+ 
+        //可以通过下面的方式修改自定义窗体的宽高
+        //info.style.width = "400px";
+        // 定义顶部标题
+        var top = document.createElement("div");
+        var titleD = document.createElement("div");
+        var closeX = document.createElement("img");
+        top.className = "info-top";
+        titleD.innerHTML = title;
+        closeX.src = "http://webapi.amap.com/images/close2.gif";
+        closeX.onclick = closeInfoWindow; //点击右上角的x可以关闭该信息窗体
+ 
+        top.appendChild(titleD);
+        top.appendChild(closeX);
+        info.appendChild(top);   //信息窗体增加顶部的div
+ 
+        // 定义中部内容
+        var middle = document.createElement("div");
+        middle.className = "info-middle";
+        middle.style.backgroundColor = 'white';
+        middle.innerHTML = content;
+        info.appendChild(middle);  //信息窗体增加中部的div
+ 
+        // 定义底部内容
+        var bottom = document.createElement("div");
+        bottom.className = "info-bottom";
+        bottom.style.position = 'relative';
+        bottom.style.top = '0px';
+        bottom.style.margin = '0 auto';
+        var sharp = document.createElement("img");
+        sharp.src = "http://webapi.amap.com/images/sharp.png";
+        bottom.appendChild(sharp);
+        info.appendChild(bottom);  //信息窗体增加底部的div
+        return info;
+    }
+ 
+    //关闭信息窗体
+    function closeInfoWindow() {
+        map.clearInfoWindow();
+    }
+</script>
+	</body>
+</html>

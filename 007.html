@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>多点标注</title>
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key=	882ab008ad507f804aaa3be9dcf7b40b"></script>   <!--引入高德地图api，key为你自己获取的key值-->
+    <style>
+        .amap-logo{
+            display: none;    /*隐藏左下角地图logo*/
+        }
+        .amap-copyright{
+            display: none!important;
+        }
+
+        html, body {
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+}
+
+#container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.button-group {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+	font-size: 12px;
+	padding: 10px;
+}
+
+.button-group .button {
+	height: 28px;
+	line-height: 28px;
+	background-color: #0D9BF2;
+	color: #FFF;
+	border: 0;
+	outline: none;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 3px;
+	margin-bottom: 4px;
+	cursor: pointer;
+}
+.button-group .inputtext {
+	height: 26px;
+	line-height: 26px;
+	border: 1px;
+	outline: none;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 3px;
+	margin-bottom: 4px;
+	cursor: pointer;
+}
+ /*
+.tip {
+	position: absolute;
+	bottom: 30px;
+	right: 10px;
+	background-color: #FFF;
+	text-align: center;
+	border: 1px solid #ccc;
+	line-height: 30px;
+	border-radius: 3px;
+	padding: 0 5px;
+	font-size: 12px;
+}
+*/
+#tip {
+	background-color: #fff;
+	padding-left: 10px;
+	padding-right: 10px;
+	position: absolute;
+	font-size: 12px;
+	right: 10px;
+	top: 20px;
+	border-radius: 3px;
+	border: 1px solid #ccc;
+	line-height: 30px;
+}
+
+/*
+#tip input[type='button'] {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	background-color: #0D9BF2;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	color: #fff;
+	font-size: 12px;
+	border-radius: 3px;
+	outline: none;
+	border: 0;
+}
+*/
+.amap-info-content {
+	font-size: 12px;
+}
+
+#myPageTop {
+	position: absolute;
+	top: 5px;
+	right: 10px;
+	background: #fff none repeat scroll 0 0;
+	border: 1px solid #ccc;
+	margin: 10px auto;
+	padding:6px;
+	font-family: "Microsoft Yahei", "微软雅黑", "Pinghei";
+	font-size: 14px;
+}
+#myPageTop label {
+	margin: 0 20px 0 0;
+	color: #666666;
+	font-weight: normal;
+}
+#myPageTop input {
+	width: 170px;
+}
+#myPageTop .column2{
+	padding-left: 25px;
+}
+    </style>
+</head>
+<body>
+<div id="container" style="width:100%;height:100%"></div>
+<div id="tip"></div>
+<script>
+    var map = new AMap.Map('container', {});
+    
+     var infoWindow = new AMap.InfoWindow({});     //创建信息窗口对象  ps.高德目前不支持多信息窗口，即使创建多个窗口对象，也只会显示一个
+
+    var lnglats= [["116.4123","39.906422"],["116.4352","39.906933"],["116.445435","39.9054345"]];
+    var data = [{"id":1,"name":"我是第1个点","type":1},{"id":2,"name":"我是第2个点","type":3},{"id":3,"name":"我是第3个点","type":7}];
+    var icon =new AMap.Icon({
+        size: new AMap.Size(25, 34),
+         image: './img/编组 10备份 7.png',
+         imageSize: new AMap.Size(20, 40) 
+    })
+    for(var i= 0;i<lnglats.length;i++){
+        var marker=new AMap.Marker({
+            position:lnglats[i],        //采用默认样式，无需自定义
+            icon: icon ,
+            map:map,
+            
+
+        })
+        marker.setLabel({
+                offset: new AMap.Pixel(-20, 35),//修改label相对于maker的位置
+                content: "中国移动"
+            });
+            ;
+        content = [];
+        content.push('ID：'+data[i].id);
+        content.push('名称：'+data[i].name);
+        marker.content = content;
+        marker.title = data[i].id+"."+data[i].name;     //标记点的title
+
+        //给Marker绑定单击事件
+       marker.on('click', markerClick);
+    }
+
+    map.setFitView();
+    
+    //信息窗口
+    function markerClick(e){
+        infoWindow.setContent(e.target.content.join('<br/>'));
+        infoWindow.open(map, e.target.getPosition());
+    }
+
+    //地图加载完成事件
+    map.on('complete', function() {
+        Materialize.toast('地图图块加载完毕！', 4000)
+//        document.getElementById('tip').innerHTML = "地图图块加载完毕！当前地图中心点为：" + data[0].name;
+    });
+</script>
+</body>
+</html>

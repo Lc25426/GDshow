@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>设置点标注的文本标签</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <style>
+        html, body, #container {
+            height: 100%;
+            width: 100%;
+        }
+ 
+        .amap-icon img {
+            width: 25px;
+            height: 34px;
+        }
+ 
+        .amap-marker-label{
+            border: 0;
+            background-color: transparent;
+        }
+ 
+        .info{
+            position: relative;
+            top: 0;
+            right: 0;
+            min-width: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=	882ab008ad507f804aaa3be9dcf7b40b"></script>
+<script type="text/javascript">
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        center: [118.7549, 32.0584],
+        zoom: 14
+    });
+
+    new AMap.Text
+    new AMap.Text({
+        map: map,
+        text: '电信营业厅',
+        position: new AMap.LngLat(118.773188,32.093253),
+        offset: new AMap.Pixel(20, 20),
+        shadow: new AMap.Icon({
+            size: new AMap.Size(20, 10),
+            image: 'https://app.ilulala.cn/images/carIcon/car.png',
+            imageSize: new AMap.Size(20, 10)
+        })
+    })
+    
+//第一个点
+    var marker = new AMap.Marker({
+        position: [118.67154,32.75252],
+        icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+        offset: new AMap.Pixel(-13, -30)
+    });
+    marker.setMap(map);
+      marker.setLabel({
+        offset: new AMap.Pixel(10, 10),  //设置文本标注偏移量
+        content: "<div class='info'>我是 marker 的 label 标签</div>", //设置文本标注内容
+        direction: 'right' //设置文本标注方位
+    });
+  //第二个点
+      var marker1 = new AMap.Marker({
+        position: [118.678569,32.712955],
+        icon: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+        offset: new AMap.Pixel(-13, -30)
+    });
+    var options = {
+        'showButton': true,//是否显示定位按钮
+		'buttonPosition': 'RB',//定位按钮的位置
+		/* LT LB RT RB */
+		'buttonOffset': new AMap.Pixel(10, 20),//定位按钮距离对应角落的距离
+		'showMarker': true,//是否显示定位点
+		'markerOptions':{//自定义定位点样式，同Marker的Options
+		  'offset': new AMap.Pixel(-18, -36),
+		  'content':'<img src="https://a.amap.com/jsapi_demos/static/resource/img/user.png" style="width:36px;height:36px"/>'
+		},
+        }
+         AMap.plugin(["AMap.Geolocation"], function() {
+        var geolocation = new AMap.Geolocation(options);
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition()
+    });
+    marker1.setMap(map);
+    marker1.setLabel({
+        offset: new AMap.Pixel(10, 10),  //设置文本标注偏移量
+        content: "<div class='info'>我是 marker 的 label 标签</div>", //设置文本标注内容
+        direction: 'right' //设置文本标注方位
+    });
+</script>
+</body>
+</html>
